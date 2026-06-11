@@ -73,17 +73,17 @@
     --color-success: #35962e;
 
     /* --- Typografie-Skala: size / line-height / letter-spacing / weight --- */
-    /* H1 — Inter Bold */
+    /* H1 — Inter Semibold */
     --text-h1: 5.16rem;
-    --text-h1--line-height: 1.1;
+    --text-h1--line-height: 1.2;
     --text-h1--letter-spacing: -0.03em;
-    --text-h1--font-weight: 700;
+    --text-h1--font-weight: 600;
 
-    /* H2 — Inter Bold */
+    /* H2 — Inter Semibold */
     --text-h2: 4.33rem;
     --text-h2--line-height: 1.2;
-    --text-h2--letter-spacing: -0.03em;
-    --text-h2--font-weight: 700;
+    --text-h2--letter-spacing: -0.02em;
+    --text-h2--font-weight: 600;
 
     /* H3 — Inter Regular + Bold */
     --text-h3: 3.83rem;
@@ -93,20 +93,20 @@
 
     /* H4 — Inter Semibold */
     --text-h4: 2.67rem;
-    --text-h4--line-height: 1.2;
-    --text-h4--letter-spacing: -0.02em;
+    --text-h4--line-height: 1.1;
+    --text-h4--letter-spacing: -0.06em;
     --text-h4--font-weight: 600;
 
     /* H5 — Inter Semibold */
     --text-h5: 1.67rem;
-    --text-h5--line-height: 1.3;
-    --text-h5--letter-spacing: -0.01em;
+    --text-h5--line-height: 1.2;
+    --text-h5--letter-spacing: -0.02em;
     --text-h5--font-weight: 600;
 
     /* Quote — Playfair Semibold */
     --text-quote: 3.33rem;
     --text-quote--line-height: 1;
-    --text-quote--letter-spacing: 0em;
+    --text-quote--letter-spacing: -0.06em;
     --text-quote--font-weight: 600;
 
     /* Subline Bold — Inter Semibold */

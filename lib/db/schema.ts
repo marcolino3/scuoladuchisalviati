@@ -62,3 +62,37 @@ export const verification = sqliteTable("verification", {
   createdAt: integer("created_at", { mode: "timestamp" }),
   updatedAt: integer("updated_at", { mode: "timestamp" }),
 });
+
+/* -------------------------------------------------------------------------- */
+/*  Header-News                                                                */
+/*  Das Banner im Seiten-Header (Label + Meldung + Kalender-Download).         */
+/*  - `eventStart`/`eventEnd`: Termin fuer die herunterladbare .ics-Datei.     */
+/*  - `publishUp`/`publishDown`: Sichtbarkeitsfenster im Header (beide opt.).  */
+/* -------------------------------------------------------------------------- */
+
+export const headerNews = sqliteTable("header_news", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  // Hervorgehobenes Label, z. B. "Open Day".
+  label: text("label").notNull(),
+  // Fliesstext der Meldung.
+  message: text("message").notNull(),
+  // Termin (fuer Kalender). `allDay` steuert die .ics-Formatierung.
+  eventStart: integer("event_start", { mode: "timestamp" }).notNull(),
+  eventEnd: integer("event_end", { mode: "timestamp" }),
+  allDay: integer("all_day", { mode: "boolean" }).notNull().default(false),
+  location: text("location"),
+  // Veroeffentlichung + Sichtbarkeitsfenster im Header.
+  published: integer("published", { mode: "boolean" }).notNull().default(true),
+  publishUp: integer("publish_up", { mode: "timestamp" }),
+  publishDown: integer("publish_down", { mode: "timestamp" }),
+  createdAt: integer("created_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+});
+
+export type HeaderNewsRow = typeof headerNews.$inferSelect;
