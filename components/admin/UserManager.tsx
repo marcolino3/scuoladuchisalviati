@@ -1,0 +1,206 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Plus, Pencil, Trash2 } from "lucide-react";
+import { UserFormDialog } from "./UserFormDialog";
+import type { UserListItem } from "./types";
+
+type Props = {
+  /** ID des aktuell eingeloggten Admins — zum Ausblenden der Lösch-Aktion. */
+  currentUserId: string;
+};
+
+export function UserManager({ currentUserId }: Props) {
+  const [items, setItems] = useState<UserListItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [formOpen, setFormOpen] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+  const [editUser, setEditUser] = useState<UserListItem | null>(null);
+  const [deleteUser, setDeleteUser] = useState<UserListItem | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      const res = await fetch("/api/users", { credentials: "include" });
+      const body = await res.json();
+      setItems(body.data ?? []);
+    } catch {
+      toast.error("Benutzer konnten nicht geladen werden");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Initiales Laden beim Mount — legitimer Effect-Use-Case; setState in load()
+    // passiert erst nach dem await (keine kaskadierenden Renders).
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, [load]);
+
+  function openCreate() {
+    setEditUser(null);
+    setFormKey((k) => k + 1);
+    setFormOpen(true);
+  }
+  function openEdit(user: UserListItem) {
+    setEditUser(user);
+    setFormKey((k) => k + 1);
+    setFormOpen(true);
+  }
+
+  async function confirmDelete() {
+    if (!deleteUser) return;
+    const res = await fetch(`/api/users/${deleteUser.id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    setDeleteUser(null);
+    if (!res.ok) {
+      const body = await res.json().catch(() => null);
+      toast.error(body?.error ?? "Löschen fehlgeschlagen");
+      return;
+    }
+    toast.success("Benutzer gelöscht");
+    load();
+  }
+
+  return (
+    <section>
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          {items.length} {items.length === 1 ? "Benutzer" : "Benutzer"}
+        </p>
+        <Button onClick={openCreate}>
+          <Plus className="size-4" />
+          Neuer Benutzer
+        </Button>
+      </div>
+
+      <div className="rounded-lg border bg-card">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Name</TableHead>
+              <TableHead>E-Mail</TableHead>
+              <TableHead>Rolle</TableHead>
+              <TableHead className="text-right">Aktionen</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={4}
+                  className="py-8 text-center text-muted-foreground"
+                >
+                  Lädt…
+                </TableCell>
+              </TableRow>
+            ) : items.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={4}
+                  className="py-8 text-center text-muted-foreground"
+                >
+                  Noch keine Benutzer.
+                </TableCell>
+              </TableRow>
+            ) : (
+              items.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium">{user.name}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {user.email}
+                  </TableCell>
+                  <TableCell>
+                    {user.role === "admin" ? (
+                      <Badge>Admin</Badge>
+                    ) : (
+                      <Badge variant="secondary">User</Badge>
+                    )}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEdit(user)}
+                        aria-label="Bearbeiten"
+                      >
+                        <Pencil className="size-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeleteUser(user)}
+                        aria-label="Löschen"
+                        disabled={user.id === currentUserId}
+                        title={
+                          user.id === currentUserId
+                            ? "Eigener Account kann nicht gelöscht werden"
+                            : undefined
+                        }
+                      >
+                        <Trash2 className="size-4 text-destructive" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      <UserFormDialog
+        key={formKey}
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        editUser={editUser}
+        onSaved={load}
+      />
+
+      <Dialog
+        open={Boolean(deleteUser)}
+        onOpenChange={(o) => !o && setDeleteUser(null)}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Benutzer löschen?</DialogTitle>
+            <DialogDescription>
+              &bdquo;{deleteUser?.email}&ldquo; wird dauerhaft entfernt. Das kann
+              nicht rückgängig gemacht werden.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteUser(null)}>
+              Abbrechen
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Löschen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </section>
+  );
+}

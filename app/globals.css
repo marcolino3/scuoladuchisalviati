@@ -5,8 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
+    --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    --font-heading: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+    --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -45,6 +46,104 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* === Brand tokens (Design-System) ============================== */
+@theme {
+    /* --- Layout --- */
+    --container-content: 1256px; /* max. Inhaltsbreite → max-w-content */
+
+    /* --- Farben --- */
+    --color-black: #2c2c2c;
+    --color-white: #ffffff;
+    --color-navy: #061337; /* Text-Primary (Navigation, Headlines) */
+    --color-goldbrown: #9b7900;
+    --color-blue: #4970d9;
+    --color-green: #28817e;
+    --color-rosa: #a40e7e;
+    --color-light-rose: #f1ddd5;
+    --color-light-grey: #f3f4f6;
+    --color-grey: #ced4da;
+    --color-light-blue: #c6d7e3;
+    --color-light-beige: #d3cac5;
+    --color-light-beige-200: #e9e5e2;
+    --color-light-beige-100: #ffefd5;
+    --color-light-beige-50: #f6f4f3;
+    --color-ocker: #e2bf75;
+    --color-success: #35962e;
+
+    /* --- Typografie-Skala: size / line-height / letter-spacing / weight --- */
+    /* H1 — Inter Bold */
+    --text-h1: 5.16rem;
+    --text-h1--line-height: 1.1;
+    --text-h1--letter-spacing: -0.03em;
+    --text-h1--font-weight: 700;
+
+    /* H2 — Inter Bold */
+    --text-h2: 4.33rem;
+    --text-h2--line-height: 1.2;
+    --text-h2--letter-spacing: -0.03em;
+    --text-h2--font-weight: 700;
+
+    /* H3 — Inter Regular + Bold */
+    --text-h3: 3.83rem;
+    --text-h3--line-height: 1.2;
+    --text-h3--letter-spacing: -0.04em;
+    --text-h3--font-weight: 700;
+
+    /* H4 — Inter Semibold */
+    --text-h4: 2.67rem;
+    --text-h4--line-height: 1.2;
+    --text-h4--letter-spacing: -0.02em;
+    --text-h4--font-weight: 600;
+
+    /* H5 — Inter Semibold */
+    --text-h5: 1.67rem;
+    --text-h5--line-height: 1.3;
+    --text-h5--letter-spacing: -0.01em;
+    --text-h5--font-weight: 600;
+
+    /* Quote — Playfair Semibold */
+    --text-quote: 3.33rem;
+    --text-quote--line-height: 1;
+    --text-quote--letter-spacing: 0em;
+    --text-quote--font-weight: 600;
+
+    /* Subline Bold — Inter Semibold */
+    --text-subline-bold: 1.5rem;
+    --text-subline-bold--line-height: 1.4;
+    --text-subline-bold--letter-spacing: -0.01em;
+    --text-subline-bold--font-weight: 600;
+
+    /* Subline — Inter Regular */
+    --text-subline: 1.5rem;
+    --text-subline--line-height: 1.4;
+    --text-subline--letter-spacing: -0.01em;
+    --text-subline--font-weight: 400;
+
+    /* Body Bold — Inter Semibold */
+    --text-body-bold: 1.33rem;
+    --text-body-bold--line-height: 1.4;
+    --text-body-bold--letter-spacing: -0.01em;
+    --text-body-bold--font-weight: 600;
+
+    /* Body — Inter Regular */
+    --text-body: 1.33rem;
+    --text-body--line-height: 1.4;
+    --text-body--letter-spacing: -0.01em;
+    --text-body--font-weight: 400;
+
+    /* Button Medium — Inter Medium */
+    --text-button-md: 1.33rem;
+    --text-button-md--line-height: 1;
+    --text-button-md--letter-spacing: -0.01em;
+    --text-button-md--font-weight: 500;
+
+    /* Button Small — Inter Medium */
+    --text-button-sm: 1.17rem;
+    --text-button-sm--line-height: 1;
+    --text-button-sm--letter-spacing: 0em;
+    --text-button-sm--font-weight: 500;
 }
 
 :root {
