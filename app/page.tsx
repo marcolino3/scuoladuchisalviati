@@ -3,14 +3,13 @@ import {
   ArrowRight,
   Baby,
   BookOpen,
-  ChevronLeft,
-  ChevronRight,
   CircleCheck,
   MessagesSquare,
   Palette,
   type LucideIcon,
 } from "lucide-react";
 
+import { DayGallery } from "@/components/home/DayGallery";
 import { CtaTeaser } from "@/components/site/CtaTeaser";
 import { Accordion, type FaqItem } from "@/components/ui/Accordion";
 import { BrandButton } from "@/components/ui/BrandButton";
@@ -216,14 +215,20 @@ export default function HomePage() {
         </section>
 
         {/* === Zitat ================================================== */}
-        <section className="mt-20 text-center lg:mt-28">
-          <blockquote className="mx-auto max-w-4xl font-serif text-2xl leading-[1.15] font-semibold text-goldbrown sm:text-3xl lg:text-[2.75rem]">
+        <section className="relative mt-20 lg:mt-28">
+          <span
+            aria-hidden
+            className="absolute top-0 left-0 font-serif text-[7rem] font-bold leading-[0.8] text-goldbrown sm:text-[10rem] lg:text-[14rem]"
+          >
+            &ldquo;
+          </span>
+          <blockquote className="px-2 pt-14 text-center font-serif text-2xl leading-[1.15] font-semibold text-goldbrown sm:px-12 sm:text-3xl lg:px-20 lg:pt-24 lg:text-[2.75rem]">
             »Una scuola che permette ai genitori di lavorare, guidata da persone
             di cui ci si può fidare, che trasmette valori in un clima di
             famiglia.«
           </blockquote>
           <div className="mx-auto mt-8 h-0.5 w-16 rounded-full bg-light-beige" />
-          <p className="mt-6 text-base text-black">
+          <p className="mt-6 text-center text-base text-black">
             Vincenzo, babbo di due bambini della prima classe
           </p>
         </section>
@@ -259,7 +264,7 @@ export default function HomePage() {
                     <br />
                     <span className="font-semibold">{card.titleStrong}</span>
                   </h3>
-                  <div className="mt-4 aspect-[355/280] overflow-hidden rounded-2xl">
+                  <div className="relative mt-4 aspect-[355/280] overflow-hidden rounded-2xl">
                     <Image
                       src={card.image}
                       alt=""
@@ -267,6 +272,7 @@ export default function HomePage() {
                       height={280}
                       className="size-full object-cover"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent from-1/2 to-black/30" />
                   </div>
                   <p className="mt-4 flex-1 text-base leading-[1.4] text-black">
                     {card.text}
@@ -287,33 +293,7 @@ export default function HomePage() {
 
         {/* === Video ================================================== */}
         <section className="mt-20 lg:mt-28">
-          <div className="relative">
-            <div className="relative flex aspect-[1256/550] items-center justify-center overflow-hidden rounded-[24px]">
-              <Image
-                src="/images/home/video.jpg"
-                alt="La nostra scuola in un giorno"
-                fill
-                className="object-cover"
-              />
-              <span className="relative grid size-20 place-items-center rounded-full bg-white/80 text-navy shadow-lg">
-                <ChevronRight className="size-8 translate-x-0.5" aria-hidden />
-              </span>
-            </div>
-            <button
-              type="button"
-              aria-label="Vorheriges Video"
-              className="absolute top-1/2 left-4 hidden size-12 -translate-y-1/2 place-items-center rounded-full bg-white text-black shadow-lg transition-colors hover:bg-black hover:text-white md:grid"
-            >
-              <ChevronLeft className="size-5" aria-hidden />
-            </button>
-            <button
-              type="button"
-              aria-label="Nächstes Video"
-              className="absolute top-1/2 right-4 hidden size-12 -translate-y-1/2 place-items-center rounded-full bg-white text-black shadow-lg transition-colors hover:bg-black hover:text-white md:grid"
-            >
-              <ChevronRight className="size-5" aria-hidden />
-            </button>
-          </div>
+          <DayGallery />
           <div className="mt-6 grid gap-4 lg:grid-cols-2 lg:gap-12">
             <h2 className="text-2xl font-semibold tracking-tight text-black lg:text-3xl">
               La nostra scuola in un giorno
@@ -333,7 +313,7 @@ export default function HomePage() {
               <h2 className="text-4xl font-semibold tracking-tight text-black lg:text-5xl">
                 Chi siamo
               </h2>
-              <Bubble src="/images/home/chisiamo.jpg" className="size-64" />
+              <Bubble src="/images/chi-siamo/drop-1.jpg" className="size-64" />
               <p className="max-w-[16rem] text-base leading-[1.4] text-black">
                 Suor Blanca e insegnanti della scuola
               </p>

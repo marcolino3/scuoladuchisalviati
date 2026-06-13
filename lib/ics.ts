@@ -40,13 +40,8 @@ function esc(value: string): string {
     .replace(/\r?\n/g, "\\n");
 }
 
-export function buildIcs(event: IcsEvent): string {
+function eventLines(event: IcsEvent): string[] {
   const lines: string[] = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//Duchi Salviati//Header News//IT",
-    "CALSCALE:GREGORIAN",
-    "METHOD:PUBLISH",
     "BEGIN:VEVENT",
     `UID:${event.uid}`,
     `DTSTAMP:${fmtUtc(event.stamp)}`,
@@ -66,7 +61,22 @@ export function buildIcs(event: IcsEvent): string {
   lines.push(`SUMMARY:${esc(event.summary)}`);
   if (event.description) lines.push(`DESCRIPTION:${esc(event.description)}`);
   if (event.location) lines.push(`LOCATION:${esc(event.location)}`);
-  lines.push("END:VEVENT", "END:VCALENDAR");
+  lines.push("END:VEVENT");
+  return lines;
+}
+
+/** Baut eine VCALENDAR-Datei mit einem oder mehreren VEVENTs. */
+export function buildIcs(events: IcsEvent | IcsEvent[]): string {
+  const list = Array.isArray(events) ? events : [events];
+  const lines: string[] = [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Duchi Salviati//Header News//IT",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    ...list.flatMap(eventLines),
+    "END:VCALENDAR",
+  ];
 
   // RFC 5545 verlangt CRLF als Zeilentrenner.
   return lines.join("\r\n") + "\r\n";

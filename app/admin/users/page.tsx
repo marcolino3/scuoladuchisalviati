@@ -21,7 +21,7 @@ export default function AdminUsersPage() {
   if (isPending || !isAdmin) {
     return (
       <main className="flex min-h-screen items-center justify-center text-muted-foreground">
-        Lädt…
+        Caricamento…
       </main>
     );
   }
@@ -30,16 +30,16 @@ export default function AdminUsersPage() {
     <main className="mx-auto max-w-5xl px-5 py-8 md:py-12">
       <header className="mb-8 flex items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold">Benutzerverwaltung</h1>
+          <h1 className="font-serif text-3xl font-bold">Gestione utenti</h1>
           <p className="text-sm text-muted-foreground">
-            Angemeldet als {session.user.email}
+            Accesso come {session.user.email}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button asChild variant="outline" size="sm">
             <Link href="/admin">
               <ArrowLeft className="size-4" />
-              Verwaltung
+              Amministrazione
             </Link>
           </Button>
           <Button
@@ -51,7 +51,7 @@ export default function AdminUsersPage() {
             }}
           >
             <LogOut className="size-4" />
-            Abmelden
+            Esci
           </Button>
         </div>
       </header>

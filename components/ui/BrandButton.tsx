@@ -95,7 +95,7 @@ export const BrandButton = ({
 
   if (href) {
     return (
-      <Link href={href} className={classes}>
+      <Link href={href} className={classes} tabIndex={props.tabIndex}>
         {content}
       </Link>
     );

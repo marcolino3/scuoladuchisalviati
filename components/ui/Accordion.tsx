@@ -39,7 +39,10 @@ export const Accordion = ({
               type="button"
               aria-expanded={isOpen}
               onClick={() => setOpen(isOpen ? null : i)}
-              className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors hover:bg-light-beige-50"
+              className={cn(
+                "flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors",
+                !isOpen && "hover:bg-light-beige-50"
+              )}
             >
               <span className="text-lg font-semibold text-black">
                 {item.question}

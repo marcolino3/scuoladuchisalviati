@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { headerNews } from "@/lib/db/schema";
 import { requireAdmin, unauthorized } from "@/lib/api/auth-guard";
 import {
-  parseEvent,
+  normalizeDates,
   parseInstant,
   serializeHeaderNews,
   updateHeaderNewsSchema,
@@ -34,28 +34,21 @@ export async function PATCH(req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  // allDay-Modus: explizit gesetzt, sonst der bestehende Wert.
-  const allDay = d.allDay ?? current.allDay;
-
   const set: Partial<typeof headerNews.$inferInsert> = { updatedAt: new Date() };
   if (d.label !== undefined) set.label = d.label;
   if (d.message !== undefined) set.message = d.message;
-  if (d.allDay !== undefined) set.allDay = d.allDay;
   if (d.location !== undefined) set.location = d.location ?? null;
   if (d.published !== undefined) set.published = d.published;
 
-  if (d.eventStart !== undefined) {
-    const ev = parseEvent(d.eventStart, allDay);
-    if (!ev) {
+  if (d.dates !== undefined) {
+    try {
+      set.dates = normalizeDates(d.dates);
+    } catch {
       return NextResponse.json(
-        { error: "Ungültiges Startdatum" },
+        { error: "Ungültiges Datum bei einem Termin" },
         { status: 400 }
       );
     }
-    set.eventStart = ev;
-  }
-  if (d.eventEnd !== undefined) {
-    set.eventEnd = d.eventEnd ? parseEvent(d.eventEnd, allDay) : null;
   }
   if (d.publishUp !== undefined) set.publishUp = parseInstant(d.publishUp);
   if (d.publishDown !== undefined) set.publishDown = parseInstant(d.publishDown);

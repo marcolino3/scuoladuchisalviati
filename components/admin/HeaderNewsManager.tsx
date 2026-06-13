@@ -24,15 +24,15 @@ import { CalendarDays, Download, Pencil, Plus, Trash2 } from "lucide-react";
 import { HeaderNewsFormDialog } from "./HeaderNewsFormDialog";
 import type { HeaderNewsItem } from "./types";
 
-/** Termin lesbar formatieren (Datum, bei timed mit Uhrzeit). */
-function formatEvent(item: HeaderNewsItem): string {
-  const d = new Date(item.allDay ? `${item.eventStart}T00:00:00` : item.eventStart);
+/** Einen einzelnen Termin lesbar formatieren (Datum, bei timed mit Uhrzeit). */
+function formatDate(date: HeaderNewsItem["dates"][number]): string {
+  const d = new Date(date.allDay ? `${date.start}T00:00:00` : date.start);
   if (isNaN(d.getTime())) return "—";
   return d.toLocaleString("it-IT", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
-    ...(item.allDay ? {} : { hour: "2-digit", minute: "2-digit" }),
+    ...(date.allDay ? {} : { hour: "2-digit", minute: "2-digit" }),
   });
 }
 
@@ -47,7 +47,7 @@ function formatWindow(item: HeaderNewsItem): string {
       : null;
   const from = fmt(item.publishUp);
   const to = fmt(item.publishDown);
-  if (!from && !to) return "immer";
+  if (!from && !to) return "sempre";
   return `${from ?? "…"} – ${to ?? "…"}`;
 }
 
@@ -65,7 +65,7 @@ export function HeaderNewsManager() {
       const body = await res.json();
       setItems(body.data ?? []);
     } catch {
-      toast.error("Header-News konnten nicht geladen werden");
+      toast.error("Impossibile caricare gli avvisi");
     } finally {
       setLoading(false);
     }
@@ -97,10 +97,10 @@ export function HeaderNewsManager() {
     setDeleteItem(null);
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      toast.error(body?.error ?? "Löschen fehlgeschlagen");
+      toast.error(body?.error ?? "Eliminazione non riuscita");
       return;
     }
-    toast.success("Header-News gelöscht");
+    toast.success("Avviso eliminato");
     load();
   }
 
@@ -108,11 +108,11 @@ export function HeaderNewsManager() {
     <section>
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {items.length} {items.length === 1 ? "Eintrag" : "Einträge"}
+          {items.length} {items.length === 1 ? "voce" : "voci"}
         </p>
         <Button onClick={openCreate}>
           <Plus className="size-4" />
-          Neue Header-News
+          Nuovo avviso
         </Button>
       </div>
 
@@ -120,11 +120,11 @@ export function HeaderNewsManager() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Label / Meldung</TableHead>
-              <TableHead>Termin</TableHead>
-              <TableHead>Sichtbar</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Aktionen</TableHead>
+              <TableHead>Etichetta / Messaggio</TableHead>
+              <TableHead>Data</TableHead>
+              <TableHead>Visibile</TableHead>
+              <TableHead>Stato</TableHead>
+              <TableHead className="text-right">Azioni</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -134,7 +134,7 @@ export function HeaderNewsManager() {
                   colSpan={5}
                   className="py-8 text-center text-muted-foreground"
                 >
-                  Lädt…
+                  Caricamento…
                 </TableCell>
               </TableRow>
             ) : items.length === 0 ? (
@@ -143,7 +143,7 @@ export function HeaderNewsManager() {
                   colSpan={5}
                   className="py-8 text-center text-muted-foreground"
                 >
-                  Noch keine Header-News.
+                  Nessun avviso.
                 </TableCell>
               </TableRow>
             ) : (
@@ -156,9 +156,13 @@ export function HeaderNewsManager() {
                     </div>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    <span className="flex items-center gap-1.5">
-                      <CalendarDays className="size-3.5 text-muted-foreground" />
-                      {formatEvent(item)}
+                    <span className="flex items-start gap-1.5">
+                      <CalendarDays className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+                      <span className="flex flex-col">
+                        {item.dates.map((d, i) => (
+                          <span key={i}>{formatDate(d)}</span>
+                        ))}
+                      </span>
                     </span>
                   </TableCell>
                   <TableCell className="whitespace-nowrap text-muted-foreground">
@@ -166,9 +170,9 @@ export function HeaderNewsManager() {
                   </TableCell>
                   <TableCell>
                     {item.published ? (
-                      <Badge>Veröffentlicht</Badge>
+                      <Badge className="bg-success text-white">Pubblicato</Badge>
                     ) : (
-                      <Badge variant="secondary">Entwurf</Badge>
+                      <Badge variant="secondary">Bozza</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -177,8 +181,8 @@ export function HeaderNewsManager() {
                         asChild
                         variant="ghost"
                         size="icon"
-                        aria-label="Kalenderdatei herunterladen"
-                        title="Kalenderdatei (.ics) herunterladen"
+                        aria-label="Scarica il file calendario"
+                        title="Scarica il file calendario (.ics)"
                       >
                         <a
                           href={`/api/header-news/${item.id}/calendar`}
@@ -191,7 +195,7 @@ export function HeaderNewsManager() {
                         variant="ghost"
                         size="icon"
                         onClick={() => openEdit(item)}
-                        aria-label="Bearbeiten"
+                        aria-label="Modifica"
                       >
                         <Pencil className="size-4" />
                       </Button>
@@ -199,7 +203,7 @@ export function HeaderNewsManager() {
                         variant="ghost"
                         size="icon"
                         onClick={() => setDeleteItem(item)}
-                        aria-label="Löschen"
+                        aria-label="Elimina"
                       >
                         <Trash2 className="size-4 text-destructive" />
                       </Button>
@@ -226,18 +230,18 @@ export function HeaderNewsManager() {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Header-News löschen?</DialogTitle>
+            <DialogTitle>Eliminare l&apos;avviso?</DialogTitle>
             <DialogDescription>
-              &bdquo;{deleteItem?.label}&ldquo; wird dauerhaft entfernt. Das kann
-              nicht rückgängig gemacht werden.
+              &laquo;{deleteItem?.label}&raquo; verrà rimosso definitivamente.
+              L&apos;operazione non può essere annullata.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteItem(null)}>
-              Abbrechen
+              Annulla
             </Button>
             <Button variant="destructive" onClick={confirmDelete}>
-              Löschen
+              Elimina
             </Button>
           </DialogFooter>
         </DialogContent>

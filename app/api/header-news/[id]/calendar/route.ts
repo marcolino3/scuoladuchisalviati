@@ -5,10 +5,13 @@ import { headerNews } from "@/lib/db/schema";
 import { buildIcs, icsFilename } from "@/lib/ics";
 
 /**
- * GET /api/header-news/[id]/calendar — .ics-Datei zum Termin (oeffentlich).
- * Nur fuer veroeffentlichte Eintraege.
+ * GET /api/header-news/[id]/calendar — .ics-Datei mit allen Terminen des
+ * Eintrags (oeffentlich, nur fuer veroeffentlichte Eintraege).
  */
-export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const { id } = await params;
 
   const row = (
@@ -19,20 +22,30 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
       .limit(1)
   )[0];
 
-  if (!row) {
+  if (!row || row.dates.length === 0) {
     return new Response("Not found", { status: 404 });
   }
 
-  const ics = buildIcs({
-    uid: `${row.id}@duchisalviati`,
-    stamp: row.updatedAt,
-    start: row.eventStart,
-    end: row.eventEnd,
-    allDay: row.allDay,
-    summary: row.label,
-    description: row.message,
-    location: row.location,
-  });
+  // Optional: ?i=<index> liefert nur einen einzelnen Termin als .ics.
+  const raw = _req.nextUrl.searchParams.get("i");
+  const idx = raw === null ? null : Number(raw);
+  const selected =
+    idx !== null && Number.isInteger(idx) && idx >= 0 && idx < row.dates.length
+      ? [{ d: row.dates[idx], i: idx }]
+      : row.dates.map((d, i) => ({ d, i }));
+
+  const ics = buildIcs(
+    selected.map(({ d, i }) => ({
+      uid: `${row.id}-${i}@duchisalviati`,
+      stamp: row.updatedAt,
+      start: new Date(d.start),
+      end: d.end ? new Date(d.end) : null,
+      allDay: d.allDay,
+      summary: row.label,
+      description: row.message,
+      location: row.location,
+    }))
+  );
 
   return new Response(ics, {
     status: 200,

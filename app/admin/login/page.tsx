@@ -38,10 +38,10 @@ export default function AdminLoginPage() {
     const { error } = await signIn.email({ email, password });
     setLoading(false);
     if (error) {
-      toast.error(error.message ?? "Anmeldung fehlgeschlagen");
+      toast.error(error.message ?? "Accesso non riuscito");
       return;
     }
-    toast.success("Willkommen zurück");
+    toast.success("Bentornato");
     router.push("/admin");
     router.refresh();
   }
@@ -57,7 +57,7 @@ export default function AdminLoginPage() {
     });
     if (error) {
       setLoading(false);
-      toast.error(error.message ?? "Google-Login fehlgeschlagen");
+      toast.error(error.message ?? "Accesso con Google non riuscito");
       return;
     }
     // Explizit weiterleiten, falls der Client nicht automatisch redirected.
@@ -68,13 +68,13 @@ export default function AdminLoginPage() {
     <main className="flex min-h-screen items-center justify-center p-5">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="font-serif text-2xl">Admin-Login</CardTitle>
-          <CardDescription>Anmeldung zum Verwaltungsbereich</CardDescription>
+          <CardTitle className="font-serif text-2xl">Accesso amministratore</CardTitle>
+          <CardDescription>Accesso all&apos;area di amministrazione</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">E-Mail</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Passwort</Label>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -96,7 +96,7 @@ export default function AdminLoginPage() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Anmelden…" : "Anmelden"}
+              {loading ? "Accesso in corso…" : "Accedi"}
             </Button>
           </form>
 
@@ -105,7 +105,7 @@ export default function AdminLoginPage() {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">oder</span>
+              <span className="bg-card px-2 text-muted-foreground">oppure</span>
             </div>
           </div>
 
@@ -117,7 +117,7 @@ export default function AdminLoginPage() {
             disabled={loading}
           >
             <GoogleIcon className="size-4" />
-            Mit Google anmelden
+            Accedi con Google
           </Button>
         </CardContent>
       </Card>
@@ -129,11 +129,11 @@ export default function AdminLoginPage() {
 function authErrorMessage(code: string, description?: string | null): string {
   switch (code) {
     case "ACCOUNT_NOT_ALLOWED":
-      return "Für diese E-Mail-Adresse ist kein Account vorhanden. Bitte wende dich an einen Administrator.";
+      return "Non esiste un account per questo indirizzo e-mail. Contatta un amministratore.";
     case "email_not_found":
-      return "Google hat keine E-Mail-Adresse übermittelt. Bitte erlaube den Zugriff auf deine E-Mail.";
+      return "Google non ha fornito un indirizzo e-mail. Consenti l'accesso alla tua e-mail.";
     default:
-      return description ?? "Anmeldung fehlgeschlagen. Bitte versuche es erneut.";
+      return description ?? "Accesso non riuscito. Riprova.";
   }
 }
 

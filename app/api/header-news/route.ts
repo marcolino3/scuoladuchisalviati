@@ -5,7 +5,7 @@ import { headerNews } from "@/lib/db/schema";
 import { requireAdmin, unauthorized } from "@/lib/api/auth-guard";
 import {
   createHeaderNewsSchema,
-  parseEvent,
+  normalizeDates,
   parseInstant,
   serializeHeaderNews,
 } from "@/lib/api/header-news-schema";
@@ -35,14 +35,18 @@ export async function POST(req: NextRequest) {
   }
   const d = parsed.data;
 
-  const eventStart = parseEvent(d.eventStart, d.allDay);
-  if (!eventStart) {
-    return NextResponse.json({ error: "Ungültiges Startdatum" }, { status: 400 });
+  let dates;
+  try {
+    dates = normalizeDates(d.dates);
+  } catch {
+    return NextResponse.json(
+      { error: "Ungültiges Datum bei einem Termin" },
+      { status: 400 }
+    );
   }
-  const eventEnd = d.eventEnd ? parseEvent(d.eventEnd, d.allDay) : null;
+
   const publishUp = parseInstant(d.publishUp);
   const publishDown = parseInstant(d.publishDown);
-
   if (publishUp && publishDown && publishDown < publishUp) {
     return NextResponse.json(
       { error: "„Sichtbar bis“ liegt vor „Sichtbar ab“." },
@@ -56,9 +60,7 @@ export async function POST(req: NextRequest) {
     .values({
       label: d.label,
       message: d.message,
-      allDay: d.allDay,
-      eventStart,
-      eventEnd,
+      dates,
       location: d.location ?? null,
       published: d.published,
       publishUp,

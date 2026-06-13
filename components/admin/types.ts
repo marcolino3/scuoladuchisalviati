@@ -10,15 +10,20 @@ export type UserListItem = {
   updatedAt: string;
 };
 
+/** Ein Termin eines Header-News-Eintrags. */
+export type HeaderNewsDateItem = {
+  /** All-Day: "YYYY-MM-DD" · timed: ISO-String. */
+  start: string;
+  end: string | null;
+  allDay: boolean;
+};
+
 /** Eintrag aus GET /api/header-news (Datumsfelder als Strings). */
 export type HeaderNewsItem = {
   id: string;
   label: string;
   message: string;
-  allDay: boolean;
-  /** All-Day: "YYYY-MM-DD" · timed: ISO-String. */
-  eventStart: string;
-  eventEnd: string | null;
+  dates: HeaderNewsDateItem[];
   location: string | null;
   published: boolean;
   /** ISO-Strings oder null. */

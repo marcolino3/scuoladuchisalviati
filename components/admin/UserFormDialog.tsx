@@ -71,15 +71,15 @@ export function UserFormDialog({
 
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        toast.error(body?.error ?? "Speichern fehlgeschlagen");
+        toast.error(body?.error ?? "Salvataggio non riuscito");
         return;
       }
 
-      toast.success(isEdit ? "Benutzer aktualisiert" : "Benutzer angelegt");
+      toast.success(isEdit ? "Utente aggiornato" : "Utente creato");
       onSaved();
       onOpenChange(false);
     } catch {
-      toast.error("Speichern fehlgeschlagen");
+      toast.error("Salvataggio non riuscito");
     } finally {
       setSaving(false);
     }
@@ -91,18 +91,18 @@ export function UserFormDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
-              {isEdit ? "Benutzer bearbeiten" : "Neuer Benutzer"}
+              {isEdit ? "Modifica utente" : "Nuovo utente"}
             </DialogTitle>
             <DialogDescription>
               {isEdit
-                ? "Rolle ändern oder ein neues Passwort vergeben."
-                : "Lege einen neuen Account mit Initialpasswort an."}
+                ? "Modifica il ruolo o imposta una nuova password."
+                : "Crea un nuovo account con una password iniziale."}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="user-name">Name</Label>
+              <Label htmlFor="user-name">Nome</Label>
               <Input
                 id="user-name"
                 value={name}
@@ -113,7 +113,7 @@ export function UserFormDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="user-email">E-Mail</Label>
+              <Label htmlFor="user-email">E-mail</Label>
               <Input
                 id="user-email"
                 type="email"
@@ -127,28 +127,28 @@ export function UserFormDialog({
 
             <div className="space-y-2">
               <Label htmlFor="user-password">
-                {isEdit ? "Neues Passwort (optional)" : "Initialpasswort"}
+                {isEdit ? "Nuova password (facoltativa)" : "Password iniziale"}
               </Label>
               <Input
                 id="user-password"
                 type="password"
                 autoComplete="new-password"
-                placeholder={isEdit ? "Leer lassen = unverändert" : undefined}
+                placeholder={isEdit ? "Lascia vuoto = invariata" : undefined}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required={!isEdit}
                 minLength={8}
               />
               <p className="text-xs text-muted-foreground">
-                Mindestens 8 Zeichen.
+                Almeno 8 caratteri.
               </p>
             </div>
 
             <div className="flex items-center justify-between rounded-lg border p-3">
               <div>
-                <Label htmlFor="user-admin">Admin-Rechte</Label>
+                <Label htmlFor="user-admin">Diritti di amministratore</Label>
                 <p className="text-xs text-muted-foreground">
-                  Voller Zugriff auf den Verwaltungsbereich.
+                  Accesso completo all&apos;area di amministrazione.
                 </p>
               </div>
               <Switch
@@ -165,10 +165,10 @@ export function UserFormDialog({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Abbrechen
+              Annulla
             </Button>
             <Button type="submit" disabled={saving}>
-              {saving ? "Speichern…" : "Speichern"}
+              {saving ? "Salvataggio…" : "Salva"}
             </Button>
           </DialogFooter>
         </form>

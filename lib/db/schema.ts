@@ -70,6 +70,17 @@ export const verification = sqliteTable("verification", {
 /*  - `publishUp`/`publishDown`: Sichtbarkeitsfenster im Header (beide opt.).  */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Ein einzelner Termin innerhalb einer Header-News (mehrere pro Eintrag).
+ * `start`/`end` als ISO-String; bei All-Day liegt `start` auf UTC-Mitternacht
+ * und das Datum ergibt sich aus den UTC-Komponenten (kein TZ-Drift).
+ */
+export type HeaderNewsDate = {
+  start: string;
+  end: string | null;
+  allDay: boolean;
+};
+
 export const headerNews = sqliteTable("header_news", {
   id: text("id")
     .primaryKey()
@@ -78,10 +89,10 @@ export const headerNews = sqliteTable("header_news", {
   label: text("label").notNull(),
   // Fliesstext der Meldung.
   message: text("message").notNull(),
-  // Termin (fuer Kalender). `allDay` steuert die .ics-Formatierung.
-  eventStart: integer("event_start", { mode: "timestamp" }).notNull(),
-  eventEnd: integer("event_end", { mode: "timestamp" }),
-  allDay: integer("all_day", { mode: "boolean" }).notNull().default(false),
+  // Ein oder mehrere Termine (fuer den Kalender-Download als .ics).
+  dates: text("dates", { mode: "json" })
+    .$type<HeaderNewsDate[]>()
+    .notNull(),
   location: text("location"),
   // Veroeffentlichung + Sichtbarkeitsfenster im Header.
   published: integer("published", { mode: "boolean" }).notNull().default(true),

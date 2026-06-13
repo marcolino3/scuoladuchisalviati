@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { Plus, Trash2 } from "lucide-react";
 import type { HeaderNewsItem } from "./types";
 
 type Props = {
@@ -23,6 +25,9 @@ type Props = {
   editItem: HeaderNewsItem | null;
   onSaved: () => void;
 };
+
+/** Termin-Zeile im Formular (Werte input-fertig: date bzw. datetime-local). */
+type DateRow = { key: string; start: string; end: string; allDay: boolean };
 
 /** ISO-String -> Wert fuer <input type="datetime-local"> (lokale Zeit). */
 function isoToLocalInput(iso: string | null): string {
@@ -40,6 +45,23 @@ function localInputToIso(value: string): string | null {
   return isNaN(d.getTime()) ? null : d.toISOString();
 }
 
+function newKey(): string {
+  return crypto.randomUUID();
+}
+
+function rowsFromItem(item: HeaderNewsItem | null): DateRow[] {
+  if (!item || item.dates.length === 0) {
+    return [{ key: newKey(), start: "", end: "", allDay: false }];
+  }
+  return item.dates.map((d) => ({
+    key: newKey(),
+    // All-Day kommt als "YYYY-MM-DD"; timed als ISO -> datetime-local.
+    start: d.allDay ? d.start : isoToLocalInput(d.start),
+    end: d.end ? (d.allDay ? d.end : isoToLocalInput(d.end)) : "",
+    allDay: d.allDay,
+  }));
+}
+
 export function HeaderNewsFormDialog({
   open,
   onOpenChange,
@@ -50,22 +72,7 @@ export function HeaderNewsFormDialog({
 
   const [label, setLabel] = useState(editItem?.label ?? "");
   const [message, setMessage] = useState(editItem?.message ?? "");
-  const [allDay, setAllDay] = useState(editItem?.allDay ?? false);
-  // eventStart/eventEnd werden input-fertig gehalten (date- bzw. datetime-local).
-  const [eventStart, setEventStart] = useState(() =>
-    editItem
-      ? editItem.allDay
-        ? editItem.eventStart
-        : isoToLocalInput(editItem.eventStart)
-      : ""
-  );
-  const [eventEnd, setEventEnd] = useState(() =>
-    editItem?.eventEnd
-      ? editItem.allDay
-        ? editItem.eventEnd
-        : isoToLocalInput(editItem.eventEnd)
-      : ""
-  );
+  const [rows, setRows] = useState<DateRow[]>(() => rowsFromItem(editItem));
   const [location, setLocation] = useState(editItem?.location ?? "");
   const [published, setPublished] = useState(editItem?.published ?? true);
   const [publishUp, setPublishUp] = useState(
@@ -76,29 +83,45 @@ export function HeaderNewsFormDialog({
   );
   const [saving, setSaving] = useState(false);
 
-  function toggleAllDay(next: boolean) {
-    setAllDay(next);
-    // Eingabeformat wechselt (date <-> datetime-local) -> Termin-Felder leeren.
-    setEventStart("");
-    setEventEnd("");
+  function updateRow(key: string, patch: Partial<DateRow>) {
+    setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...patch } : r)));
+  }
+  function toggleRowAllDay(key: string, next: boolean) {
+    // Eingabeformat wechselt (date <-> datetime-local) -> Werte leeren.
+    setRows((rs) =>
+      rs.map((r) =>
+        r.key === key ? { ...r, allDay: next, start: "", end: "" } : r
+      )
+    );
+  }
+  function addRow() {
+    setRows((rs) => [...rs, { key: newKey(), start: "", end: "", allDay: false }]);
+  }
+  function removeRow(key: string) {
+    setRows((rs) => (rs.length > 1 ? rs.filter((r) => r.key !== key) : rs));
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    if (rows.some((r) => !r.start)) {
+      toast.error("Indica un inizio per ogni data.");
+      return;
+    }
+
     setSaving(true);
 
     try {
+      const dates = rows.map((r) => ({
+        start: r.allDay ? r.start : localInputToIso(r.start),
+        end: r.end ? (r.allDay ? r.end : localInputToIso(r.end)) : null,
+        allDay: r.allDay,
+      }));
+
       const payload = {
         label,
         message,
-        allDay,
-        // All-Day: roher "YYYY-MM-DD"-Wert. Timed: datetime-local -> ISO.
-        eventStart: allDay ? eventStart : localInputToIso(eventStart),
-        eventEnd: eventEnd
-          ? allDay
-            ? eventEnd
-            : localInputToIso(eventEnd)
-          : null,
+        dates,
         location: location.trim() || null,
         published,
         publishUp: localInputToIso(publishUp),
@@ -117,15 +140,15 @@ export function HeaderNewsFormDialog({
 
       if (!res.ok) {
         const body = await res.json().catch(() => null);
-        toast.error(body?.error ?? "Speichern fehlgeschlagen");
+        toast.error(body?.error ?? "Salvataggio non riuscito");
         return;
       }
 
-      toast.success(isEdit ? "Header-News aktualisiert" : "Header-News angelegt");
+      toast.success(isEdit ? "Avviso aggiornato" : "Avviso creato");
       onSaved();
       onOpenChange(false);
     } catch {
-      toast.error("Speichern fehlgeschlagen");
+      toast.error("Salvataggio non riuscito");
     } finally {
       setSaving(false);
     }
@@ -133,23 +156,24 @@ export function HeaderNewsFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-5xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>
-              {isEdit ? "Header-News bearbeiten" : "Neue Header-News"}
+              {isEdit ? "Modifica avviso" : "Nuovo avviso"}
             </DialogTitle>
             <DialogDescription>
-              Banner im Seiten-Header mit Termin und Kalender-Download.
+              Banner nell&apos;intestazione della pagina con una o più date e
+              download del calendario.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="hn-label">Label</Label>
+              <Label htmlFor="hn-label">Etichetta</Label>
               <Input
                 id="hn-label"
-                placeholder="z. B. Open Day"
+                placeholder="es. Open Day"
                 value={label}
                 onChange={(e) => setLabel(e.target.value)}
                 required
@@ -157,58 +181,88 @@ export function HeaderNewsFormDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="hn-message">Meldung</Label>
+              <Label htmlFor="hn-message">Messaggio</Label>
               <textarea
                 id="hn-message"
                 className="flex min-h-20 w-full rounded-md border border-input bg-transparent px-3 py-2 text-base shadow-xs outline-none transition-[color,box-shadow] placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50 md:text-sm"
-                placeholder="Fließtext der Meldung…"
+                placeholder="Testo del messaggio…"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 required
               />
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border p-3">
-              <div>
-                <Label htmlFor="hn-allday">Ganztägig</Label>
-                <p className="text-xs text-muted-foreground">
-                  Termin ohne Uhrzeit (nur Datum).
-                </p>
+            {/* Termine (mehrere moeglich) */}
+            <div className="space-y-3 rounded-lg border p-3">
+              <div className="flex items-center justify-between">
+                <Label>Date</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={addRow}
+                >
+                  <Plus className="size-4" />
+                  Data
+                </Button>
               </div>
-              <Switch
-                id="hn-allday"
-                checked={allDay}
-                onCheckedChange={toggleAllDay}
-              />
-            </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="hn-start">Termin (Start)</Label>
-                <Input
-                  id="hn-start"
-                  type={allDay ? "date" : "datetime-local"}
-                  value={eventStart}
-                  onChange={(e) => setEventStart(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="hn-end">Ende (optional)</Label>
-                <Input
-                  id="hn-end"
-                  type={allDay ? "date" : "datetime-local"}
-                  value={eventEnd}
-                  onChange={(e) => setEventEnd(e.target.value)}
-                />
-              </div>
+              {rows.map((row, i) => (
+                <div key={row.key} className="space-y-2 rounded-md bg-muted/40 p-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Data {i + 1}
+                    </span>
+                    <div className="flex items-center gap-3">
+                      <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        Tutto il giorno
+                        <Switch
+                          size="sm"
+                          checked={row.allDay}
+                          onCheckedChange={(v) => toggleRowAllDay(row.key, v)}
+                        />
+                      </label>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        aria-label="Rimuovi data"
+                        disabled={rows.length === 1}
+                        onClick={() => removeRow(row.key)}
+                      >
+                        <Trash2 className="size-3.5 text-destructive" />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <div className="space-y-1">
+                      <Label className="text-xs">Inizio</Label>
+                      <DateTimePicker
+                        mode={row.allDay ? "date" : "datetime"}
+                        value={row.start}
+                        onChange={(v) => updateRow(row.key, { start: v })}
+                        placeholder="Scegli l'inizio"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Fine (facoltativo)</Label>
+                      <DateTimePicker
+                        mode={row.allDay ? "date" : "datetime"}
+                        value={row.end}
+                        onChange={(v) => updateRow(row.key, { end: v })}
+                        placeholder="Scegli la fine"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="hn-location">Ort (optional)</Label>
+              <Label htmlFor="hn-location">Luogo (facoltativo)</Label>
               <Input
                 id="hn-location"
-                placeholder="z. B. Viale Dei Pini, 194"
+                placeholder="es. Viale Dei Pini, 194"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
               />
@@ -216,33 +270,35 @@ export function HeaderNewsFormDialog({
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="hn-up">Sichtbar ab (optional)</Label>
-                <Input
+                <Label htmlFor="hn-up">Visibile dal (facoltativo)</Label>
+                <DateTimePicker
                   id="hn-up"
-                  type="datetime-local"
+                  mode="datetime"
                   value={publishUp}
-                  onChange={(e) => setPublishUp(e.target.value)}
+                  onChange={setPublishUp}
+                  placeholder="Subito"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="hn-down">Sichtbar bis (optional)</Label>
-                <Input
+                <Label htmlFor="hn-down">Visibile fino al (facoltativo)</Label>
+                <DateTimePicker
                   id="hn-down"
-                  type="datetime-local"
+                  mode="datetime"
                   value={publishDown}
-                  onChange={(e) => setPublishDown(e.target.value)}
+                  onChange={setPublishDown}
+                  placeholder="Senza limite"
                 />
               </div>
             </div>
             <p className="text-xs text-muted-foreground">
-              Ohne Angabe ist der Eintrag sofort bzw. unbegrenzt sichtbar.
+              Senza indicazioni la voce è visibile subito e senza limiti di tempo.
             </p>
 
             <div className="flex items-center justify-between rounded-lg border p-3">
               <div>
-                <Label htmlFor="hn-published">Veröffentlicht</Label>
+                <Label htmlFor="hn-published">Pubblicato</Label>
                 <p className="text-xs text-muted-foreground">
-                  Nur veröffentlichte Einträge erscheinen im Header.
+                  Solo le voci pubblicate compaiono nell&apos;intestazione.
                 </p>
               </div>
               <Switch
@@ -259,10 +315,10 @@ export function HeaderNewsFormDialog({
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
-              Abbrechen
+              Annulla
             </Button>
             <Button type="submit" disabled={saving}>
-              {saving ? "Speichern…" : "Speichern"}
+              {saving ? "Salvataggio…" : "Salva"}
             </Button>
           </DialogFooter>
         </form>

@@ -43,7 +43,7 @@ export function UserManager({ currentUserId }: Props) {
       const body = await res.json();
       setItems(body.data ?? []);
     } catch {
-      toast.error("Benutzer konnten nicht geladen werden");
+      toast.error("Impossibile caricare gli utenti");
     } finally {
       setLoading(false);
     }
@@ -76,10 +76,10 @@ export function UserManager({ currentUserId }: Props) {
     setDeleteUser(null);
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      toast.error(body?.error ?? "Löschen fehlgeschlagen");
+      toast.error(body?.error ?? "Eliminazione non riuscita");
       return;
     }
-    toast.success("Benutzer gelöscht");
+    toast.success("Utente eliminato");
     load();
   }
 
@@ -87,11 +87,11 @@ export function UserManager({ currentUserId }: Props) {
     <section>
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm text-muted-foreground">
-          {items.length} {items.length === 1 ? "Benutzer" : "Benutzer"}
+          {items.length} {items.length === 1 ? "utente" : "utenti"}
         </p>
         <Button onClick={openCreate}>
           <Plus className="size-4" />
-          Neuer Benutzer
+          Nuovo utente
         </Button>
       </div>
 
@@ -99,10 +99,10 @@ export function UserManager({ currentUserId }: Props) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>E-Mail</TableHead>
-              <TableHead>Rolle</TableHead>
-              <TableHead className="text-right">Aktionen</TableHead>
+              <TableHead>Nome</TableHead>
+              <TableHead>E-mail</TableHead>
+              <TableHead>Ruolo</TableHead>
+              <TableHead className="text-right">Azioni</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -112,7 +112,7 @@ export function UserManager({ currentUserId }: Props) {
                   colSpan={4}
                   className="py-8 text-center text-muted-foreground"
                 >
-                  Lädt…
+                  Caricamento…
                 </TableCell>
               </TableRow>
             ) : items.length === 0 ? (
@@ -121,7 +121,7 @@ export function UserManager({ currentUserId }: Props) {
                   colSpan={4}
                   className="py-8 text-center text-muted-foreground"
                 >
-                  Noch keine Benutzer.
+                  Nessun utente.
                 </TableCell>
               </TableRow>
             ) : (
@@ -135,7 +135,7 @@ export function UserManager({ currentUserId }: Props) {
                     {user.role === "admin" ? (
                       <Badge>Admin</Badge>
                     ) : (
-                      <Badge variant="secondary">User</Badge>
+                      <Badge variant="secondary">Utente</Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">
@@ -144,7 +144,7 @@ export function UserManager({ currentUserId }: Props) {
                         variant="ghost"
                         size="icon"
                         onClick={() => openEdit(user)}
-                        aria-label="Bearbeiten"
+                        aria-label="Modifica"
                       >
                         <Pencil className="size-4" />
                       </Button>
@@ -152,11 +152,11 @@ export function UserManager({ currentUserId }: Props) {
                         variant="ghost"
                         size="icon"
                         onClick={() => setDeleteUser(user)}
-                        aria-label="Löschen"
+                        aria-label="Elimina"
                         disabled={user.id === currentUserId}
                         title={
                           user.id === currentUserId
-                            ? "Eigener Account kann nicht gelöscht werden"
+                            ? "Non puoi eliminare il tuo account"
                             : undefined
                         }
                       >
@@ -185,18 +185,18 @@ export function UserManager({ currentUserId }: Props) {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Benutzer löschen?</DialogTitle>
+            <DialogTitle>Eliminare l&apos;utente?</DialogTitle>
             <DialogDescription>
-              &bdquo;{deleteUser?.email}&ldquo; wird dauerhaft entfernt. Das kann
-              nicht rückgängig gemacht werden.
+              &laquo;{deleteUser?.email}&raquo; verrà rimosso definitivamente.
+              L&apos;operazione non può essere annullata.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteUser(null)}>
-              Abbrechen
+              Annulla
             </Button>
             <Button variant="destructive" onClick={confirmDelete}>
-              Löschen
+              Elimina
             </Button>
           </DialogFooter>
         </DialogContent>

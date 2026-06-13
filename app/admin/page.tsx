@@ -20,7 +20,7 @@ export default function AdminPage() {
   if (isPending || !isAdmin) {
     return (
       <main className="flex min-h-screen items-center justify-center text-muted-foreground">
-        Lädt…
+        Caricamento…
       </main>
     );
   }
@@ -29,22 +29,22 @@ export default function AdminPage() {
     <main className="mx-auto max-w-5xl px-5 py-8 md:py-12">
       <header className="mb-8 flex items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-bold">Verwaltung</h1>
+          <h1 className="font-serif text-3xl font-bold">Amministrazione</h1>
           <p className="text-sm text-muted-foreground">
-            Angemeldet als {session.user.email}
+            Accesso come {session.user.email}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button asChild variant="outline" size="sm">
             <Link href="/admin/header-news">
               <Megaphone className="size-4" />
-              Header-News
+              Avvisi
             </Link>
           </Button>
           <Button asChild variant="outline" size="sm">
             <Link href="/admin/users">
               <Users className="size-4" />
-              Benutzer
+              Utenti
             </Link>
           </Button>
           <Button
@@ -56,7 +56,7 @@ export default function AdminPage() {
             }}
           >
             <LogOut className="size-4" />
-            Abmelden
+            Esci
           </Button>
         </div>
       </header>
@@ -71,9 +71,9 @@ export default function AdminPage() {
               <Megaphone className="size-5" />
             </span>
             <div>
-              <h2 className="font-medium">Header-News</h2>
+              <h2 className="font-medium">Avvisi</h2>
               <p className="text-sm text-muted-foreground">
-                Banner mit Termin & Kalender-Download verwalten
+                Gestisci i banner con data e download del calendario
               </p>
             </div>
           </div>
@@ -87,9 +87,9 @@ export default function AdminPage() {
               <Users className="size-5" />
             </span>
             <div>
-              <h2 className="font-medium">Benutzerverwaltung</h2>
+              <h2 className="font-medium">Gestione utenti</h2>
               <p className="text-sm text-muted-foreground">
-                Benutzer anlegen, bearbeiten und löschen
+                Crea, modifica ed elimina gli utenti
               </p>
             </div>
           </div>

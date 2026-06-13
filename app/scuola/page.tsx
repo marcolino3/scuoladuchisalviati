@@ -90,7 +90,7 @@ const testimonials: { quote: string; author: string }[] = [
 
 const ScuolaPage = () => {
   return (
-    <main className="relative">
+    <main className="relative overflow-x-clip">
       <div className="mx-auto max-w-content px-4 py-12 lg:py-16">
         {/* === Intro =================================================== */}
         <section>
@@ -103,9 +103,9 @@ const ScuolaPage = () => {
             </p>
           </header>
 
-          <div className="mt-12 grid items-center gap-12 lg:mt-16 lg:grid-cols-2">
+          <div className="mt-12 grid items-start gap-12 lg:mt-16 lg:grid-cols-2">
             {/* Bild-Cluster (Platzhalter) */}
-            <div className="relative mx-auto aspect-[638/803] w-full max-w-sm lg:max-w-md">
+            <div className="relative mx-auto aspect-[638/803] w-full max-w-md lg:max-w-lg">
               <Bubble
                 src="/images/scuola/intro-1.jpg"
                 className="absolute top-[7%] left-0 aspect-square w-[63%] bg-light-blue"
@@ -158,7 +158,7 @@ const ScuolaPage = () => {
                 Perché conviene iscriversi?
               </h2>
               <Bubble
-                src="/images/scuola/perche-video.jpg"
+                src="/images/scuola/suor-blanca.jpg"
                 className="size-[170px]"
               />
               <p className="max-w-[12rem] text-base leading-[1.4] text-black">

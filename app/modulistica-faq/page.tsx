@@ -73,7 +73,7 @@ const faqItems: FaqItem[] = [
 
 const ModulisticaFaqPage = () => {
   return (
-    <main className="relative">
+    <main className="relative overflow-x-clip">
       <div className="mx-auto max-w-content px-4 py-12 lg:py-16">
         {/* === Modulistica ========================================== */}
         <section>
