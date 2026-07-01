@@ -9,17 +9,10 @@ import { cn } from "@/lib/utils";
 
 import { accentClasses, serviceTabs } from "./services-data";
 
-const galleryImages = [
-  "/images/scuola/gallery-1.jpg",
-  "/images/scuola/gallery-2.jpg",
-  "/images/scuola/gallery-3.jpg",
-  "/images/scuola/gallery-4.jpg",
-];
-
 /** Bild-Galerie einer Karte – horizontaler Slider (mobil & Desktop per Swipe). */
-const ServiceGallery = () => (
+const ServiceGallery = ({ images }: { images: string[] }) => (
   <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-    {galleryImages.map((src) => (
+    {images.map((src) => (
       <div
         key={src}
         className="aspect-square w-[240px] shrink-0 snap-start overflow-hidden rounded-2xl bg-light-beige-200 sm:w-[260px]"
@@ -186,6 +179,7 @@ export const ServicesTabs = () => {
         >
           {serviceTabs.map((tab, i) => {
             const Icon = tab.icon;
+            const accent = accentClasses[tab.accent];
             const isActive = tab.id === activeId;
             return (
               <article
@@ -200,14 +194,19 @@ export const ServicesTabs = () => {
                 )}
               >
                 {/* Bild-Galerie */}
-                <ServiceGallery />
+                <ServiceGallery images={tab.gallery} />
 
                 {/* Inhalt: Titel/Buttons + Feature-Liste */}
                 <div className="mt-10 flex flex-col gap-10 lg:flex-row lg:gap-8">
                   {/* Linke Spalte */}
                   <div className="flex flex-1 flex-col items-start gap-8">
                     <div className="flex flex-col items-start gap-4">
-                      <span className="grid size-[100px] place-items-center rounded-full bg-light-grey text-navy">
+                      <span
+                        className={cn(
+                          "grid size-[100px] place-items-center rounded-full border-2 border-dotted bg-white text-navy",
+                          accent.activeTag
+                        )}
+                      >
                         <Icon
                           className="size-12"
                           strokeWidth={1.25}
@@ -250,7 +249,7 @@ export const ServicesTabs = () => {
                           )}
                           <div className="flex items-center gap-2">
                             <FeatureIcon
-                              className="size-5 shrink-0 text-black"
+                              className="size-5 shrink-0 text-navy"
                               strokeWidth={1.5}
                               aria-hidden
                             />

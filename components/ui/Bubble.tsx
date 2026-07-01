@@ -8,6 +8,8 @@ interface BubbleProps {
   alt?: string;
   /** Positions-/Größen-Utilities (absolute, h-…, w-…, top-…, …). */
   className?: string;
+  /** Zusätzliche Klassen fürs Bild – z. B. object-position für den Ausschnitt. */
+  imgClassName?: string;
 }
 
 /**
@@ -16,7 +18,7 @@ interface BubbleProps {
  * `relative` macht den Container zum Bezugsrahmen für das `fill`-Bild;
  * absolut positionierte Aufrufe überschreiben das via tailwind-merge.
  */
-export const Bubble = ({ src, alt = "", className }: BubbleProps) => {
+export const Bubble = ({ src, alt = "", className, imgClassName }: BubbleProps) => {
   return (
     <div
       className={cn(
@@ -25,7 +27,13 @@ export const Bubble = ({ src, alt = "", className }: BubbleProps) => {
       )}
     >
       {src && (
-        <Image src={src} alt={alt} fill sizes="360px" className="object-cover" />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="360px"
+          className={cn("object-cover", imgClassName)}
+        />
       )}
     </div>
   );

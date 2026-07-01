@@ -61,22 +61,24 @@ const ImpressumPage = () => {
   return (
     <main className="relative">
       <div className="mx-auto max-w-content px-4 py-12 lg:py-16">
-        <div className="grid gap-10 lg:grid-cols-[1fr_2fr] lg:gap-16">
-          <h1 className="text-3xl font-semibold tracking-tight text-black lg:text-4xl">
-            Impressum
-          </h1>
+        <div className="rounded-[40px] rounded-tr-[8px] bg-white p-6 shadow-[0_2px_12px_rgba(0,0,0,0.08)] sm:p-10 lg:px-14 lg:py-12">
+          <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
+            <h1 className="text-3xl font-semibold tracking-tight text-black sm:text-[2rem]">
+              Impressum
+            </h1>
 
-          <div className="flex flex-col gap-8">
-            {legalBlocks.map((block) => (
-              <section key={block.title}>
-                <h2 className="text-base font-semibold text-black">
-                  {block.title}
-                </h2>
-                <div className="mt-1 flex flex-col gap-1 text-base leading-[1.4] text-black">
-                  {block.body}
-                </div>
-              </section>
-            ))}
+            <div className="flex flex-col gap-8">
+              {legalBlocks.map((block) => (
+                <section key={block.title}>
+                  <h2 className="text-base font-semibold text-black">
+                    {block.title}
+                  </h2>
+                  <div className="mt-1 flex flex-col gap-1 text-base leading-[1.4] text-black">
+                    {block.body}
+                  </div>
+                </section>
+              ))}
+            </div>
           </div>
         </div>
       </div>

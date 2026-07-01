@@ -98,7 +98,7 @@ const ScuolaPage = () => {
             <h1 className="text-5xl font-semibold tracking-tight text-black lg:text-[3.875rem]">
               La Scuola
             </h1>
-            <p className="mt-4 text-lg font-medium text-black/80 lg:text-xl">
+            <p className="mt-4 text-2xl leading-[1.1] font-semibold tracking-tight text-navy lg:text-[2rem]">
               Ciò che la nostra scuola offre ai bambini.
             </p>
           </header>
@@ -214,22 +214,24 @@ const ScuolaPage = () => {
             </h2>
           </div>
 
-          <div className="mt-6 rounded-[24px] bg-light-beige-200 p-6 sm:p-8">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {testimonials.map((t) => (
-                <figure
-                  key={t.author}
-                  className="flex flex-col gap-3 rounded-[24px] rounded-tl-[4px] bg-white px-6 py-5"
-                >
-                  <blockquote className="text-lg leading-[1.4] font-semibold text-black">
-                    {t.quote}
-                  </blockquote>
-                  <div className="h-0.5 w-16 rounded-full bg-light-beige" />
-                  <figcaption className="text-lg leading-[1.4] text-black">
-                    {t.author}
-                  </figcaption>
-                </figure>
-              ))}
+          <div className="mt-6 rounded-[32px] border border-light-blue p-2 sm:p-3">
+            <div className="rounded-[24px] bg-light-beige-200 p-6 sm:p-8">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {testimonials.map((t) => (
+                  <figure
+                    key={t.author}
+                    className="flex flex-col gap-3 rounded-[24px] rounded-tl-[4px] bg-white px-6 py-5"
+                  >
+                    <blockquote className="text-lg leading-[1.4] font-semibold text-black">
+                      {t.quote}
+                    </blockquote>
+                    <div className="h-0.5 w-16 rounded-full bg-light-beige" />
+                    <figcaption className="text-lg leading-[1.4] text-black">
+                      {t.author}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
             </div>
           </div>
         </section>

@@ -30,6 +30,8 @@ export type ServiceTab = {
   icon: LucideIcon;
   accent: Accent;
   downloadLabel: string;
+  /** Bild-Galerie (4 Fotos) – je Schulstufe eigene Aufnahmen. */
+  gallery: string[];
   features: Feature[];
 };
 
@@ -71,6 +73,12 @@ export const serviceTabs: ServiceTab[] = [
     icon: Baby,
     accent: "rosa",
     downloadLabel: "Inscriviti al Nido – Scarica il modulo (681 KB)",
+    gallery: [
+      "/images/scuola/nido-1.jpg",
+      "/images/scuola/nido-2.jpg",
+      "/images/scuola/nido-3.jpg",
+      "/images/scuola/nido-4.jpg",
+    ],
     features: [
       {
         icon: HeartHandshake,
@@ -112,6 +120,12 @@ export const serviceTabs: ServiceTab[] = [
     icon: Palette,
     accent: "blue",
     downloadLabel: "Inscriviti alla Infanzia – Scarica il modulo (681 KB)",
+    gallery: [
+      "/images/scuola/infanzia-1.jpg",
+      "/images/scuola/infanzia-2.jpg",
+      "/images/scuola/infanzia-3.jpg",
+      "/images/scuola/infanzia-4.jpg",
+    ],
     features: scuolaFeatures,
   },
   {
@@ -122,6 +136,12 @@ export const serviceTabs: ServiceTab[] = [
     icon: BookOpen,
     accent: "green",
     downloadLabel: "Inscriviti al Primaria – Scarica il modulo (681 KB)",
+    gallery: [
+      "/images/scuola/primaria-1.jpg",
+      "/images/scuola/primaria-2.jpg",
+      "/images/scuola/primaria-3.jpg",
+      "/images/scuola/primaria-4.jpg",
+    ],
     features: scuolaFeatures,
   },
 ];

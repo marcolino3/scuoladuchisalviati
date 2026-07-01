@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/Logo";
 import {
   Sheet,
   SheetClose,
@@ -38,9 +39,11 @@ export const MobileNav = () => {
         className="w-4/5 max-w-xs gap-0 bg-white/95 backdrop-blur-[18px]"
       >
         <SheetHeader>
-          <SheetTitle className="text-left text-[18px] font-bold text-navy">
-            Navigation
-          </SheetTitle>
+          <SheetTitle className="sr-only">Navigation</SheetTitle>
+          {/* Marke als Kopf: Wappen + Wortmarke, klickbar zur Startseite */}
+          <SheetClose asChild>
+            <Logo />
+          </SheetClose>
         </SheetHeader>
 
         <nav

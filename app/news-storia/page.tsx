@@ -1,11 +1,12 @@
-import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 
 import {
   INSTAGRAM_PROFILE,
   InstagramFeed,
 } from "@/components/news/InstagramFeed";
+import { StoriaTimeline } from "@/components/news/StoriaTimeline";
 import { BrandButton } from "@/components/ui/BrandButton";
+import { Bubble } from "@/components/ui/Bubble";
 import { InstagramIcon } from "@/components/ui/InstagramIcon";
 
 const instagramPosts = [
@@ -18,18 +19,13 @@ const NewsStoriaPage = () => {
   return (
     <main className="relative">
       <div className="mx-auto max-w-content px-4 py-12 lg:py-16">
-        {/* === Intro mit Wappen ====================================== */}
+        {/* === Intro ================================================= */}
         <section className="grid items-center gap-10 lg:grid-cols-[auto_1fr] lg:gap-16">
-          <div className="mx-auto w-44 shrink-0 overflow-hidden rounded-[24px] bg-white p-3 shadow-[0_8px_28px_rgba(139,145,154,0.28)] sm:w-52">
-            <Image
-              src="/wappen.png"
-              alt="Wappen des Istituto Duchi Salviati"
-              width={400}
-              height={490}
-              priority
-              className="h-auto w-full rounded-[16px] object-contain"
-            />
-          </div>
+          <Bubble
+            src="/images/news/intro-edificio.jpg"
+            alt="L’edificio dell’Istituto Duchi Salviati"
+            className="mx-auto size-44 shrink-0 sm:size-52"
+          />
           <div>
             <h1 className="text-4xl font-semibold tracking-tight text-black lg:text-[3.875rem] lg:leading-[1.1]">
               News, eventi e la nostra storia
@@ -77,41 +73,19 @@ const NewsStoriaPage = () => {
           </div>
         </section>
 
-        {/* === La nostra storia ===================================== */}
+        {/* === Le tappe della nostra storia ========================= */}
         <section className="mt-20 lg:mt-28">
-          <h2 className="text-center text-4xl font-semibold tracking-tight text-black lg:text-5xl">
-            La nostra storia
-          </h2>
-
-          <div className="mt-10 grid gap-8 lg:grid-cols-2 lg:gap-16">
-            <h3 className="text-2xl font-semibold tracking-tight text-navy lg:text-3xl">
-              Una storia di educazione e crescita
-            </h3>
-            <p className="text-base leading-[1.4] text-black">
-              Da generazioni l’Istituto Duchi Salviati accompagna bambini e
-              famiglie con passione, dedizione e attenzione alla persona. Scopri le
-              origini della nostra scuola e i valori che ancora oggi guidano il
-              nostro percorso educativo.
+          <header className="text-center">
+            <h2 className="text-4xl font-semibold tracking-tight text-black lg:text-5xl">
+              Le tappe della nostra storia
+            </h2>
+            <p className="mt-4 text-2xl leading-[1.1] font-semibold tracking-tight text-black lg:text-[2rem]">
+              Oltre 160 anni di educazione, accoglienza e crescita
             </p>
-          </div>
+          </header>
 
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            {["/images/news/storia-1.png", "/images/news/storia-2.png"].map(
-              (src) => (
-                <div
-                  key={src}
-                  className="aspect-[528/572] overflow-hidden rounded-[20px] bg-light-beige-200"
-                >
-                  <Image
-                    src={src}
-                    alt=""
-                    width={528}
-                    height={572}
-                    className="size-full object-cover"
-                  />
-                </div>
-              )
-            )}
+          <div className="mt-10 rounded-[24px] bg-light-beige-50 px-4 py-10 sm:px-8 lg:mt-12 lg:px-10 lg:py-16">
+            <StoriaTimeline />
           </div>
         </section>
       </div>

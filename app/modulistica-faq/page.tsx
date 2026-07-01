@@ -81,7 +81,7 @@ const ModulisticaFaqPage = () => {
             <h1 className="text-5xl font-semibold tracking-tight text-black lg:text-[3.875rem]">
               Modulistica
             </h1>
-            <p className="mt-4 text-lg font-medium text-black/80 lg:text-xl">
+            <p className="mt-4 text-2xl leading-[1.1] font-semibold tracking-tight text-navy lg:text-[2rem]">
               Scarica facilmente tutta la modulistica della scuola
             </p>
           </header>

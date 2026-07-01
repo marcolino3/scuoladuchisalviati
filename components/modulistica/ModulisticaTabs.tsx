@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { Check, Download } from "lucide-react";
 
 import { accentClasses } from "@/components/scuola/services-data";
-import { BrandButton } from "@/components/ui/BrandButton";
 import { cn } from "@/lib/utils";
 
 import { modulisticaSchools } from "./modulistica-data";
@@ -151,6 +150,7 @@ export const ModulisticaTabs = () => {
         >
           {modulisticaSchools.map((school, i) => {
             const Icon = school.icon;
+            const accent = accentClasses[school.accent];
             const isActive = school.id === activeId;
             return (
               <article
@@ -168,7 +168,12 @@ export const ModulisticaTabs = () => {
                   {/* Schul-Titel */}
                   <div className="lg:w-1/3">
                     <div className="flex flex-col items-start gap-4 lg:sticky lg:top-8">
-                      <span className="grid size-[100px] place-items-center rounded-full bg-light-grey text-navy">
+                      <span
+                        className={cn(
+                          "grid size-[100px] place-items-center rounded-full border-2 border-dotted bg-white text-navy",
+                          accent.activeTag
+                        )}
+                      >
                         <Icon
                           className="size-12"
                           strokeWidth={1.25}
@@ -200,16 +205,18 @@ export const ModulisticaTabs = () => {
                             {item.text}
                           </p>
                         )}
-                        <BrandButton
+                        <a
                           href="#"
-                          variant="solid"
-                          color={school.accent}
-                          iconLeft={Download}
-                          className="mt-3"
                           tabIndex={isActive ? undefined : -1}
+                          className="mt-3 inline-flex items-center gap-2 text-base font-medium text-navy transition-colors hover:text-navy/70"
                         >
+                          <Download
+                            className="size-5 shrink-0"
+                            strokeWidth={1.5}
+                            aria-hidden
+                          />
                           Scarica il modulo PDF ({item.size})
-                        </BrandButton>
+                        </a>
                       </li>
                     ))}
                   </ul>
